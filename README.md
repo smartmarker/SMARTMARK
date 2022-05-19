@@ -1,12 +1,23 @@
 # **SMARTMARK - Software Watermarking Scheme for Smart Contracts**
 
-*SMARTMARK* is a novel software watermarking scheme, aiming to address the ownership verification problem for smart contracts. *SMARTMARK* builds the control flow graph of a target contract runtime bytecode and carefully selects some bytes from each block in the control flow graph to represent a watermark. Any extra bytes for the watermark are not added to the contract's runtime bytecode, which is safe from an adversary's watermark targeted attack and gas cost increment.  
+*SMARTMARK* is a novel software watermarking scheme, aiming to address the ownership verification problem for smart contracts. *SMARTMARK* builds the control flow graph of a target contract runtime bytecode and carefully selects some bytes from each block in the control flow graph to represent a watermark. Any extra bytes for the watermark are not added to the contract's runtime bytecode, making it safe from an adversary's watermark targeted attack and gas cost increment.  
+
+This includes *SMARTMARK*'s source code and smart conract dataset, as well as watermark resiliency evaluation code and data.
+We submitted the *SMARTMARK* paper to ASE 2022.
 </br>
 
-## How to watermark
+## Usage
 
 
-The common input of embedder and verifier is control flow graph (CFG) generated from the contract runtime bytecode. In *SMARTMARK*, we use CFG file in json format provided by https://github.com/SeUniVr/EtherSolve.git.
+The common input of embedder and verifier is control flow graph (CFG) generated from the contract runtime bytecode. In *SMARTMARK*, we basically use CFG file in json format provided by [EtherSolve](https://github.com/SeUniVr/EtherSolve.git).  
+
+This tool has been tested on Ubuntu 18.04 with Python 3.7.5.
+
+### Prerequisites
+If Python3 and pip3 are installed on your system, all you have to do before using this tool is just installing a crypto library for Keccak-256 hash function as below:
+```
+$ pip3 install pycryptodome
+```
 
 ### Watermark Embedder
 
@@ -35,7 +46,7 @@ optional arguments:
                         max opcode number for opcode grouping (default: 5)
 ```
 
-- (1) input file path (CFG file of contract), and (2) output file path (watermark reference object, hashmark) must be specified.
+- The path of input file path (CFG file of contract) and output files (watermark reference object, hashmark) must be specified.
 - The length (*L*) and number (*N*) of watermark are also user-specified options, but embedding may fail depending on the watermark capacity of the contract.
 
 ### Watermark Verifier
@@ -56,7 +67,7 @@ optional arguments:
                         output watermark file
 ```
 
-- (1) input file path (CFG file of contract, watermark reference object, hashmark), and (2) output file path (watermark) must be specified.
+- The path of input files (CFG file of contract, watermark reference object, hashmark) and output file (watermark) must be specified.
 
   
 </br>
@@ -71,6 +82,7 @@ If embedding failes due to insufficient number of CFG blocks, it returns the err
 ## Smart contract and watermark deployment
 
 In order to assert the copyright of the contract afterwards, the author should store the hashmark in the EVM storage of the contract address. hashmark is a commitment to whether the watermark reference object held by the author is the same as that generated during watermark embedding operation.
+
 
 How to initialize the storage variable with hashmark value inside the constructor function is as below:
 
@@ -87,7 +99,8 @@ contract Watermark {
 }
 ```
 
----
 
 ## Dataset
-on progress
+we collected nine million blocks from the Ethereum Mainnet, extracted 11,754 unique bytecodes through CFG generation ([EtherSolve](https://github.com/SeUniVr/EtherSolve.git)) and DBSCAN clustering. (Section 6)
+
+The CFG files in json format for 11,754 contracts are located in the [contract_CFG_dataset](contract_CFG_dataset) directory.
